@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.util.*
 
 @Tag(name = "Dog Breed APIs", description = "Breed APIs for demo purpose")
 @RestController
@@ -15,11 +14,10 @@ import java.util.*
 class DogBreedController(private val dogBreedService: DogBreedService) {
 
     @GetMapping
-    fun allDogBreeds(): List<DogBreedResponse> {
+    suspend fun allDogBreeds(): List<DogBreedResponse> {
         val breeds = dogBreedService.getBreeds() //findAll();
 
-        val collect =
-            breeds.stream()
+        val collect = breeds
                 .map { dogBreed: DogBreed -> this.mapToDogBreedResponse(dogBreed) }
                 .toList()
         return collect

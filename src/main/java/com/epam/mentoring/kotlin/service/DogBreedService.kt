@@ -10,12 +10,12 @@ class DogBreedService(private val dogBreedRepository: DogBreedRepository) {
 
 
     @Cacheable("breeds")
-    fun getBreeds(): List<DogBreed> {
+    suspend fun getBreeds(): List<DogBreed> {
         var all: List<DogBreed> = dogBreedRepository.findAll() as List<DogBreed>
         return all;
     }
 
-    fun save(breeds: Map<String, List<String>>): Unit {
+    suspend fun save(breeds: Map<String, List<String>>): Unit {
         val dogBreeds: List<DogBreed> = breeds.entries
             .map(this::toDogBreed)          //map to objects DogBreed
             .toList()
@@ -23,11 +23,11 @@ class DogBreedService(private val dogBreedRepository: DogBreedRepository) {
         dogBreedRepository.saveAll(dogBreeds);
     }
 
-   private fun toDogBreed(entry: Map.Entry<String, List<String>>): DogBreed {
-        val value : List < String >  = entry . value
-        val subBreeds : String   = value.joinToString(",")
+    private fun toDogBreed(entry: Map.Entry<String, List<String>>): DogBreed {
+        val value: List<String> = entry.value
+        val subBreeds: String = value.joinToString(",")
 
-        val dogBreed : DogBreed = DogBreed (null, entry.key, subBreeds, null)
+        val dogBreed: DogBreed = DogBreed(null, entry.key, subBreeds, null)
         return dogBreed;
     }
 }

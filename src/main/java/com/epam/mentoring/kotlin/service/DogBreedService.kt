@@ -15,6 +15,8 @@ open class DogBreedService(@Autowired private val dogBreedRepository: DogBreedRe
     @Cacheable("breeds")
    open suspend fun getBreeds(): List<DogBreed> {
         var all: List<DogBreed> = dogBreedRepository.findAll().toList()
+
+        println("11111111111111 $all")
         return all;
     }
 
@@ -24,6 +26,8 @@ open class DogBreedService(@Autowired private val dogBreedRepository: DogBreedRe
                                                 .toList()
 
         dogBreedRepository.saveAll(dogBreeds).collect();
+
+        getBreeds()
     }
 
     private fun toDogBreed(entry: Map.Entry<String, List<String>>): DogBreed {

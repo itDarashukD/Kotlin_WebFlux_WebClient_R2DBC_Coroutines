@@ -22,7 +22,6 @@ import org.springframework.r2dbc.connection.init.ResourceDatabasePopulator
     )
 )
 @EnableCaching
-@ComponentScan(basePackages = ["com.epam.mentoring.kotlin","com.epam.mentoring.kotlin.repository.DogBreedRepository"])
 @SpringBootApplication
 open class Application {
 
@@ -35,11 +34,6 @@ open class Application {
         initializer.setDatabasePopulator(populator)
 
         return initializer
-    }
-
-    @Bean
-    open fun r2dbcEntityTemplate(connectionFactory: ConnectionFactory): R2dbcEntityTemplate {
-        return R2dbcEntityTemplate(connectionFactory)
     }
 
     companion object {

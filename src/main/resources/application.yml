@@ -1,3 +1,6 @@
+server:
+  port: 8081
+
 spring:
   cache:
     caffeine:
@@ -15,7 +18,10 @@ spring:
 
 # Use properties below for setting up r2dbc:
   r2dbc:
-    url: r2dbc:h2:file:///./src/test/resources/~;MODE=PostgreSQL
+    url: r2dbc:h2:file:///./src/test/resources/db/~;MODE=PostgreSQL
+#    url: r2dbc:h2:mem:///testdb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+#    username: sa
+#    password: sa
 
 management:
   endpoint:
@@ -28,3 +34,8 @@ management:
       exposure:
         include: [ "prometheus", "metrics"]
 
+
+#logging:
+#   level:
+#     org:
+#       springframework : debug

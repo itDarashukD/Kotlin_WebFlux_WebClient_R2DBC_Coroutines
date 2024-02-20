@@ -13,8 +13,8 @@ class DogBreedApiClient(webClientBuilder: WebClient.Builder) {
     private val webClient: WebClient = webClientBuilder.baseUrl(DOG_BREED_API_URL).build()
 
     @Throws(Exception::class)
-    fun getBreeds(): Map<String, List<String>> {
-//        ResponseEntity<DogBreedApiResponse> response = restTemplate.getForEntity(DOG_BREED_API_URL, DogBreedApiResponse.class);
+    suspend  fun getBreeds(): Map<String, List<String>> {
+
         val response = webClient.get()
                                 .uri("/api/breeds/list/all")
                                 .retrieve()

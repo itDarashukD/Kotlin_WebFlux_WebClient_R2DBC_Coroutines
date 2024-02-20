@@ -2,25 +2,28 @@ package com.epam.mentoring.kotlin.service
 
 import com.epam.mentoring.kotlin.model.DogBreed
 import com.epam.mentoring.kotlin.repository.DogBreedRepository
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.toList
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 
 @Service
-class DogBreedService(private val dogBreedRepository: DogBreedRepository) {
+open class DogBreedService(@Autowired private val dogBreedRepository: DogBreedRepository)  {
 
 
     @Cacheable("breeds")
-    suspend fun getBreeds(): List<DogBreed> {
-        var all: List<DogBreed> = dogBreedRepository.findAll() as List<DogBreed>
+   open suspend fun getBreeds(): List<DogBreed> {
+        var all: List<DogBreed> = dogBreedRepository.findAll().toList()
         return all;
     }
 
-    suspend fun save(breeds: Map<String, List<String>>): Unit {
+    open suspend fun save(breeds: Map<String, List<String>>): Unit {
         val dogBreeds: List<DogBreed> = breeds.entries
-            .map(this::toDogBreed)          //map to objects DogBreed
-            .toList()
+                                                .map(this::toDogBreed)          //map to objects DogBreed
+                                                .toList()
 
-        dogBreedRepository.saveAll(dogBreeds);
+        dogBreedRepository.saveAll(dogBreeds).collect();
     }
 
     private fun toDogBreed(entry: Map.Entry<String, List<String>>): DogBreed {

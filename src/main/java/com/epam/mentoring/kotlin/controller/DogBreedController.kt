@@ -15,7 +15,7 @@ class DogBreedController(private val dogBreedService: DogBreedService) {
 
     @GetMapping
     suspend fun allDogBreeds(): List<DogBreedResponse> {
-        val breeds = dogBreedService.getBreeds() //findAll();
+        val breeds = dogBreedService.getBreeds()        //findAll();
 
         val collect = breeds
                 .map { dogBreed: DogBreed -> this.mapToDogBreedResponse(dogBreed) }

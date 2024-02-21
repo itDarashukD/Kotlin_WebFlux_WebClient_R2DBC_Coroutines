@@ -21,7 +21,7 @@ class DogBreedDatabasePopulator(val dogBreedApiClient: DogBreedApiClient,val dog
 
     @Throws(Exception::class)
     suspend fun initializeDatabase(): Unit {
-        if (dogBreedService.getBreeds().isEmpty()) {  //findAll();
+        if (dogBreedService.getAllBreeds().isEmpty()) {  //findAll();
             val breeds: Map<String, List<String>> = dogBreedApiClient.getBreeds(); //call https://dog.ceo/api/breeds/list/all";
 
             dogBreedService.save(breeds);

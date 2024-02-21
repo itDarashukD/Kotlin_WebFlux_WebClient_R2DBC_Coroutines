@@ -5,6 +5,7 @@ import com.epam.mentoring.kotlin.model.DogBreedResponse
 import com.epam.mentoring.kotlin.service.DogBreedService
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -14,18 +15,42 @@ import org.springframework.web.bind.annotation.RestController
 class DogBreedController(private val dogBreedService: DogBreedService) {
 
     @GetMapping
-    suspend fun allDogBreeds(): List<DogBreedResponse> {
-        val breeds = dogBreedService.getBreeds()        //findAll();
+    suspend fun getAllDogBreeds(): List<DogBreedResponse> {
+        val breeds = dogBreedService.getAllBreeds()        //findAll();
 
         val collect = breeds
-                .map { dogBreed: DogBreed -> this.mapToDogBreedResponse(dogBreed) }
-                .toList()
+            .map { dogBreed -> this.mapToDogBreedResponse(dogBreed) }
+            .toList()
         return collect
         //                .toList();
     }
 
-    private fun mapToDogBreedResponse(dogBreed: DogBreed): DogBreedResponse {
+    @GetMapping
+    suspend fun getAllSubBreeds(): List<String> {
+        return dogBreedService.getAllSubBreeds()
+    }
 
+    @GetMapping(path = ["/{breed}"])
+    suspend fun getAllSubBreedsByBreed(@PathVariable(value = "breed") breed: String): List<String> {
+        return dogBreedService.getAllSubBreedsByBreed(breed)
+    }
+
+    @GetMapping
+    suspend fun getAllBreedsWithoutSubBreeds(): List<DogBreedResponse> {
+        var allBreedsWithoutSubBreeds = dogBreedService.getAllBreedsWithoutSubBreeds()
+
+        val collect = allBreedsWithoutSubBreeds
+            .map { dogBreed -> this.mapToDogBreedResponse(dogBreed) }
+            .toList()
+        return collect
+    }
+
+    @GetMapping(path = ["/{breed}"])
+    suspend fun getImageByBreed(@PathVariable(value = "breed") breed: String): ByteArray? {
+        return dogBreedService.getImageByBreed(breed)
+    }
+
+    private fun mapToDogBreedResponse(dogBreed: DogBreed): DogBreedResponse {
         val dogBreedList: List<String>? = convertSubBreeds(dogBreed.subBreed)
 
         return DogBreedResponse(dogBreed.breed, dogBreedList)

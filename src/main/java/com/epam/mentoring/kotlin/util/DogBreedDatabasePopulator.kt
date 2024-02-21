@@ -24,7 +24,7 @@ class DogBreedDatabasePopulator(val dogBreedApiClient: DogBreedApiClient,val dog
         if (dogBreedService.getAllBreeds().isEmpty()) {  //findAll();
             val breeds: Map<String, List<String>> = dogBreedApiClient.getBreeds(); //call https://dog.ceo/api/breeds/list/all";
 
-            dogBreedService.save(breeds);
+            dogBreedService.saveAll(breeds);
          }
     }
 }

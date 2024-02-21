@@ -21,30 +21,52 @@ open class DogBreedService(
         var allBreeds: List<DogBreed> = dogBreedRepository.findAll().toList()
 
         println("11111111111111 $allBreeds")
-        return allBreeds;
+
+        if (allBreeds.isNotEmpty()) {
+            return allBreeds
+        }
+        return emptyList()
     }
 
-    open suspend fun getAllSubBreeds(): List<String> {
+    open suspend fun getAllSubBreeds(): Set<String> {
         var allBreeds: List<DogBreed> = dogBreedRepository.findAll().toList()
 
-        val collect = allBreeds.map { dogBreed -> dogBreed.subBreed }.toList()
-        return collect
+        val collect = allBreeds.map { dogBreed -> dogBreed.subBreed }.toSet()
+        println("11111111111111 $collect")
+
+        if (collect.isNotEmpty()) {
+            return collect
+        }
+        return emptySet()
     }
 
     open suspend fun getAllBreedsWithoutSubBreeds(): List<DogBreed> {
         var allBreeds: List<DogBreed> = dogBreedRepository.findAll().toList()
 
-        val collect = allBreeds.filter { it.subBreed.isBlank() }.toList()
-        return collect
+        val collect = allBreeds
+            .filter { it.subBreed.isBlank() }
+            .toList()
+        println("11111111111111 $collect")
+
+        if (collect.isNotEmpty()) {
+            return collect
+        }
+        return emptyList()
     }
 
     open suspend fun getAllSubBreedsByBreed(breed: String): List<String> {
         var allBreeds: List<DogBreed> = dogBreedRepository.findAll().toList()
 
         val collect = allBreeds.filter { it.breed == breed }
-            .map { it.subBreed }
-            .toList()
-        return collect
+                                        .map { it.subBreed }
+                                        .toList()
+
+        println("11111111111111 $collect")
+        if (collect.isNotEmpty()) {
+            return collect
+        }
+        return emptyList()
+
     }
 
     open suspend fun getImageByBreed(breed: String): ByteArray? {
@@ -68,7 +90,7 @@ open class DogBreedService(
         return false
     }
 
-    open suspend fun save(breeds: Map<String, List<String>>): Unit {
+    open suspend fun saveAll(breeds: Map<String, List<String>>): Unit {
         val dogBreeds: List<DogBreed> = breeds.entries
             .map(this::toDogBreed)          //map to objects DogBreed
             .toList()

@@ -4,6 +4,7 @@ import com.epam.mentoring.kotlin.model.DogBreedApiResponse
 import com.epam.mentoring.kotlin.model.ImageUrlResponse
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.awaitBody
 
 @Component
 class DogBreedApiClient(webClientBuilder: WebClient.Builder) {
@@ -28,47 +29,43 @@ class DogBreedApiClient(webClientBuilder: WebClient.Builder) {
     }
 
     suspend fun getImage(breed: String): ByteArray? {
-        var imagesUrls: List<String> = getImagesUrls(breed)
+        var imagesUrls: List<String>? = getImagesUrls(breed)
         var image: ByteArray? = downloadImage(imagesUrls)
 
         return image
     }
 
-    private fun getImagesUrls(breed: String): List<String> {
-        val response = webClient.get()
+    private suspend fun getImagesUrls(breed: String): List<String>? {
+        val response: ImageUrlResponse = webClient.get()
             .uri("/api/breed/$breed/images")
             .retrieve()
-            .toEntity(ImageUrlResponse::class.java)
-            .block()
+            .awaitBody<ImageUrlResponse>()
+//            .block()
 
-        if (200 != response.statusCode.value()) {
+        if (response == null) {
             throw Exception()
         }
-        val body = response.body.urlsList
-        return body
+        return response.message
     }
 
 
-    private fun downloadImage(imagesUrls: List<String>): ByteArray? {
-//        var imageList: List<ByteArray?> = imagesUrls.map { url ->
-//            webClient.get()
-//                .uri(url)
-//                .retrieve()
-//                .toEntity(ByteArray::class.java)
-//                .block()
-//                .takeIf { it.statusCode.is2xxSuccessful }
-//                ?.body
-//        }
+    private suspend fun downloadImage(imagesUrls: List<String>?): ByteArray? {
 
-        var url: String? = imagesUrls.takeIf { it.isNullOrEmpty() }?.first()
+        var url: String? = imagesUrls
+                                    ?.filter { it.isNotBlank() }
+                                    ?.first()
 
         var image: ByteArray? = webClient.get()
             .uri(url)
             .retrieve()
-            .toEntity(ByteArray::class.java)
-            .block()
-            .takeIf { it.statusCode.is2xxSuccessful }
-            ?.body
+            .awaitBody<ByteArray>()
+
+//            takeIf { it.statusCode.is2xxSuccessful }
+//            ?.body
+
+        if (image == null) {
+            throw Exception()
+        }
 
         return image
     }

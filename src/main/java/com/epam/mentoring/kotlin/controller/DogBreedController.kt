@@ -19,8 +19,8 @@ class DogBreedController(private val dogBreedService: DogBreedService) {
         val breeds = dogBreedService.getAllBreeds()        //findAll();
 
         val collect = breeds
-            .map { dogBreed -> this.mapToDogBreedResponse(dogBreed) }
-            .toList()
+                            .map { dogBreed -> this.mapToDogBreedResponse(dogBreed) }
+                            .toList()
         return collect
     }
 
@@ -46,7 +46,8 @@ class DogBreedController(private val dogBreedService: DogBreedService) {
 
     @GetMapping(path = ["/image/{breed}"])
     suspend fun getImageByBreed(@PathVariable(value = "breed") breed: String): ByteArray? {
-        return dogBreedService.getImageByBreed(breed)
+        var imageByBreed = dogBreedService.getImageByBreed(breed)
+        return imageByBreed
     }
 
     private fun mapToDogBreedResponse(dogBreed: DogBreed): DogBreedResponse {

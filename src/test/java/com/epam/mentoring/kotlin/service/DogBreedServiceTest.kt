@@ -7,32 +7,17 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.verify
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertFailsWith
 
+
+
 class DogBreedServiceTest {
-    /*private val dogBreedRepository: DogBreedRepository = mockk()
-    private val dogBreedService = DogBreedService(dogBreedRepository)
 
-    @Test
-    fun `test getAllBreeds returns expected breeds`() = runTest {
-        // Given
-        val expectedBreeds = listOf(DogBreed(1, "Labrador", "", byteArrayOf()))
-        coEvery { dogBreedRepository.findAll() } returns expectedBreeds
-
-        // When
-        val result = dogBreedService.getAllBreeds()
-
-        // Then
-        assertEquals(expectedBreeds, result)
-    }
-}*/
     private val repo: DogBreedRepository = mockk()
     private val apiClient: DogBreedApiClient = mockk()
     private val mockService = DogBreedService(repo, apiClient)
@@ -53,11 +38,6 @@ class DogBreedServiceTest {
     )
 
 
-    @BeforeEach
-    fun setUp() {
-    }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllBreeds_whenListIsNotEmptyShouldReturnListWithBreed_breadListReturned() = runTest {
         coEvery { repo.findAll() } returns breedsListWithIds1And2.asFlow()
@@ -68,7 +48,6 @@ class DogBreedServiceTest {
     }
 
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllSubBreeds_whenListBreadsIsEmptyShouldThrowException_illegalStateExceptionThrown() =
         runTest {
@@ -82,7 +61,6 @@ class DogBreedServiceTest {
         }
 
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllSubBreeds_happyPassShouldReturnSubBreedList_subBreedListReturned() = runTest {
         coEvery { repo.findAll() } returns breedsListWithIds1And2.asFlow()

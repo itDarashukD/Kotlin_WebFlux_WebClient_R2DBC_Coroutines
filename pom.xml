@@ -145,6 +145,8 @@
       <version>${kotlin.version}</version>
     </dependency>
 
+<!--    test-->
+
     <dependency>
       <groupId>org.jetbrains.kotlinx</groupId>
       <artifactId>kotlinx-coroutines-test</artifactId>
@@ -158,10 +160,18 @@
       <version>1.13.9</version>
       <scope>test</scope>
     </dependency>
+
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-test</artifactId>
       <version>RELEASE</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.ninja-squad</groupId>
+      <artifactId>springmockk</artifactId>
+      <version>3.1.2</version>
       <scope>test</scope>
     </dependency>
 

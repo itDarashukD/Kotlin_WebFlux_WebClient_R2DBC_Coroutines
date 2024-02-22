@@ -16,12 +16,10 @@ class DogBreedController(private val dogBreedService: DogBreedService) {
 
     @GetMapping
     suspend fun getAllDogBreeds(): List<DogBreedResponse> {
-        val breeds = dogBreedService.getAllBreeds()        //findAll();
+        val breeds = dogBreedService.getAllBreeds()
 
-        val collect = breeds
-                            .map { dogBreed -> this.mapToDogBreedResponse(dogBreed) }
-                            .toList()
-        return collect
+        return breeds.map { dogBreed -> this.mapToDogBreedResponse(dogBreed) }
+                     .toList()
     }
 
     @GetMapping(path = ["/subBreeds"])
@@ -38,16 +36,14 @@ class DogBreedController(private val dogBreedService: DogBreedService) {
     suspend fun getAllBreedsWithoutSubBreeds(): List<DogBreedResponse> {
         var allBreedsWithoutSubBreeds = dogBreedService.getAllBreedsWithoutSubBreeds()
 
-        val collect = allBreedsWithoutSubBreeds
-            .map { dogBreed -> this.mapToDogBreedResponse(dogBreed) }
-            .toList()
-        return collect
+        return allBreedsWithoutSubBreeds
+                                        .map { dogBreed -> this.mapToDogBreedResponse(dogBreed) }
+                                        .toList()
     }
 
     @GetMapping(path = ["/image/{breed}"])
     suspend fun getImageByBreed(@PathVariable(value = "breed") breed: String): ByteArray? {
-        var imageByBreed = dogBreedService.getImageByBreed(breed)
-        return imageByBreed
+        return dogBreedService.getImageByBreed(breed)
     }
 
     private fun mapToDogBreedResponse(dogBreed: DogBreed): DogBreedResponse {
@@ -63,4 +59,6 @@ class DogBreedController(private val dogBreedService: DogBreedService) {
         }
         return emptyList()
     }
+
+
 }

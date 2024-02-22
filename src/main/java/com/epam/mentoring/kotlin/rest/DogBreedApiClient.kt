@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
 
+
+
 @Component
 class DogBreedApiClient(webClientBuilder: WebClient.Builder) {
 
@@ -24,48 +26,38 @@ class DogBreedApiClient(webClientBuilder: WebClient.Builder) {
         if (200 != response.statusCode.value()) {
             throw Exception()
         }
-        val body = response.body
-        return body.message             //Map<String, List<String>> message
+        return response.body.message
     }
 
     suspend fun getImage(breed: String): ByteArray? {
-        var imagesUrls: List<String>? = getImagesUrls(breed)
-        var image: ByteArray? = downloadImage(imagesUrls)
+        val imagesUrls: List<String>? = getImagesUrls(breed)
+        val image: ByteArray? = downloadImage(imagesUrls)
 
         return image
     }
 
     private suspend fun getImagesUrls(breed: String): List<String>? {
-        val response: ImageUrlResponse = webClient.get()
+        val response: ImageUrlResponse =
+            webClient.get()
             .uri("/api/breed/$breed/images")
             .retrieve()
             .awaitBody<ImageUrlResponse>()
 
-        if (response == null) {
-            throw Exception()
-        }
         return response.message
     }
 
 
     private suspend fun downloadImage(imagesUrls: List<String>?): ByteArray? {
-        var url: String? = imagesUrls
+        val url: String? = imagesUrls
                                     ?.filter { it.isNotBlank() }
                                     ?.first()
 
-        var image: ByteArray? = webClient.get()
-            .uri(url)
-            .retrieve()
-            .awaitBody<ByteArray>()
-
-//            takeIf { it.statusCode.is2xxSuccessful }
-//            ?.body
-
-        if (image == null) {
-            throw Exception()
+        return url?.let {
+            webClient.get()
+                .uri(it)
+                .retrieve()
+                .awaitBody<ByteArray>()
         }
-
-        return image
     }
 
 }

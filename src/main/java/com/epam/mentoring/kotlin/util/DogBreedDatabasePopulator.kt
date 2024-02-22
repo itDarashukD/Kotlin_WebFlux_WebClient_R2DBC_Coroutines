@@ -6,8 +6,9 @@ import kotlinx.coroutines.runBlocking
 import org.springframework.context.annotation.Profile
 import org.springframework.context.event.ContextRefreshedEvent
 import org.springframework.context.event.EventListener
-
 import org.springframework.stereotype.Component
+
+
 
 @Profile("dev")
 @Component

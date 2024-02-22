@@ -1,5 +1,8 @@
 package com.epam.mentoring.kotlin.service
 
+import ch.qos.logback.classic.Logger
+import ch.qos.logback.classic.spi.ILoggingEvent
+import ch.qos.logback.core.read.ListAppender
 import com.epam.mentoring.kotlin.model.DogBreed
 import com.epam.mentoring.kotlin.repository.DogBreedRepository
 import com.epam.mentoring.kotlin.rest.DogBreedApiClient
@@ -11,9 +14,9 @@ import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import kotlin.test.assertFailsWith
-
+import org.slf4j.LoggerFactory
 
 
 class DogBreedServiceTest {
@@ -26,17 +29,27 @@ class DogBreedServiceTest {
     private val dogBreedId2 = DogBreed(2, "Labrador2", "german", byteArrayOf(1, 2, 3))
     private val dogBreedId3 = DogBreed(null, "Labrador", "german,france", null)
     private val dogBreedId4 = DogBreed(null, "Labrador2", "australia,india", null)
-    private val dogBreedId5 = DogBreed(5, "Labrador", "", byteArrayOf(5,5,5))
+    private val dogBreedId5 = DogBreed(5, "Labrador", "", byteArrayOf(5, 5, 5))
 
-    private var breedsListWithIds1And2 = listOf(dogBreedId1, dogBreedId2)
-    private var breedsListWithIds3And4 = listOf(dogBreedId3, dogBreedId4)
-    private var breedsListWithExistSubBread = listOf(dogBreedId2)
-    private var expectedBreedsEmptyList = emptyList<DogBreed>()
+    private val breedsListWithIds1And2 = listOf(dogBreedId1, dogBreedId2)
+    private val breedsListWithIds3And4 = listOf(dogBreedId3, dogBreedId4)
+    private val breedsListWithExistSubBread = listOf(dogBreedId2)
+    private val expectedBreedsEmptyList = emptyList<DogBreed>()
     private val breedMap: Map<String, List<String>> = mutableMapOf(
         "Labrador" to listOf("german", "france"),
         "Labrador2" to listOf("australia", "india")
     )
 
+    val logger: Logger = LoggerFactory.getLogger(DogBreedService::class.java) as Logger
+    val listAppender = ListAppender<ILoggingEvent>().apply {
+        start()
+    }
+
+    @BeforeEach
+    fun before() {
+        logger.addAppender(listAppender)
+
+    }
 
     @Test
     fun getAllBreeds_whenListIsNotEmptyShouldReturnListWithBreed_breadListReturned() = runTest {
@@ -49,15 +62,13 @@ class DogBreedServiceTest {
 
 
     @Test
-    fun getAllSubBreeds_whenListBreadsIsEmptyShouldThrowException_illegalStateExceptionThrown() =
+    fun getAllSubBreeds_whenListBreadsIsEmptyShouldThrowLogException_exceptionLogged() =
         runTest {
             coEvery { repo.findAll() } returns emptyList<DogBreed>().asFlow()
 
-            val exception = assertFailsWith<IllegalStateException> {
-                mockService.getAllBreeds()
-            }
+            mockService.getAllBreeds()
 
-            assertEquals("All Breads list is empty", exception.message)
+            assertTrue(listAppender.list.any { it.message.contains("AllBreads list is empty") })
         }
 
 
@@ -73,15 +84,13 @@ class DogBreedServiceTest {
 
 
     @Test
-    fun getAllBreedsWithoutSubBreeds_whenListBreadsIsEmptyShouldeThrowException_illegalStateExceptionThrown() =
+    fun getAllBreedsWithoutSubBreeds_whenListBreadsIsEmptyShouldLogException_exceptionLogged() =
         runTest {
             coEvery { repo.findAll() } returns expectedBreedsEmptyList.asFlow()
 
-            val exception = assertFailsWith<IllegalStateException> {
-                mockService.getAllBreedsWithoutSubBreeds()
-            }
+            mockService.getAllBreedsWithoutSubBreeds()
 
-            assertEquals("All Breads list is empty", exception.message)
+            assertTrue(listAppender.list.any { it.message.contains("AllBreads list is empty") })
         }
 
     @Test
@@ -107,14 +116,13 @@ class DogBreedServiceTest {
 
 
     @Test
-    fun getAllSubBreedsByBreed_whenListBreadsIsEmptyShouldThrowException_illegalStateExceptionThrown() {
+    fun getAllSubBreedsByBreed_whenListBreadsIsEmptyShouldLogException_exceptionLogged() {
         runTest {
             coEvery { repo.findAll() } returns expectedBreedsEmptyList.asFlow()
 
-            val exception = assertFailsWith<IllegalStateException> {
-                mockService.getAllSubBreedsByBreed("dummyBreed")
-            }
-            assertEquals("All Breads list is empty", exception.message)
+            mockService.getAllSubBreedsByBreed("dummyBreed")
+
+            assertTrue(listAppender.list.any { it.message.contains("AllBreads list is empty") })
         }
     }
 
@@ -122,7 +130,7 @@ class DogBreedServiceTest {
     fun getAllSubBreedsByBreed__happyPassShouldReturnAllSubBreeds_allSubBreedsReturned() = runTest {
         coEvery { repo.findAll() } returns breedsListWithIds1And2.asFlow()
 
-        var allSubBreedsByBreed: Set<String> = mockService.getAllSubBreedsByBreed(dogBreedId2.breed)
+        val allSubBreedsByBreed: Set<String> = mockService.getAllSubBreedsByBreed(dogBreedId2.breed)
 
         assertTrue(allSubBreedsByBreed.size == 1)
         assertTrue(allSubBreedsByBreed.contains(dogBreedId2.subBreed))
@@ -132,7 +140,7 @@ class DogBreedServiceTest {
     fun getAllSubBreedsByBreed__whenNoBreedsFoundShouldReturnEmptySet_emptySetReturned() = runTest {
         coEvery { repo.findAll() } returns breedsListWithIds1And2.asFlow()
 
-        var allSubBreedsByBreed: Set<String> = mockService.getAllSubBreedsByBreed("notExistsBreed")
+        val allSubBreedsByBreed: Set<String> = mockService.getAllSubBreedsByBreed("notExistsBreed")
 
         assertTrue(allSubBreedsByBreed.isEmpty())
     }
@@ -148,15 +156,16 @@ class DogBreedServiceTest {
     }
 
     @Test
-    fun getImageByBreed_whenListBreadsIsEmptyShouldThrowException_illegalStateExceptionThrown() =
+    fun getImageByBreed_whenListBreadsIsEmptyShouldLogException_exceptionLogged() =
         runTest {
+            coEvery { repo.save(any()) } returns dogBreedId5
             coEvery { repo.findAll() } returns expectedBreedsEmptyList.asFlow()
             coEvery { apiClient.getImage(match { it.isNotEmpty() }) } returns byteArrayOf(1, 2, 3)
 
-            val exception = assertFailsWith<IllegalStateException> {
-                mockService.getImageByBreed("dummyBreed")
-            }
-            assertEquals("All Breads list is empty", exception.message)
+            mockService.getImageByBreed("dummyBreed")
+
+            coVerify(exactly = 1) { repo.save(any()) }
+            assertTrue(listAppender.list.any { it.message.contains("AllBreads list is empty") })
         }
 
     @Test
@@ -165,7 +174,7 @@ class DogBreedServiceTest {
             coEvery { repo.findAll() } returns breedsListWithIds1And2.asFlow()
             coEvery { apiClient.getImage(match { it.isNotEmpty() }) } returns dogBreedId2.image
 
-            var imageByBreed: ByteArray? = mockService.getImageByBreed("dummyBreed")
+            val imageByBreed: ByteArray? = mockService.getImageByBreed("dummyBreed")
 
             assertEquals(imageByBreed, dogBreedId2.image)
             coVerify(exactly = 0) { repo.save(dogBreedId2) }
@@ -175,11 +184,11 @@ class DogBreedServiceTest {
     @Test
     fun getImageByBreed_whenBreadNotInDbShouldCallSave_saveInvoked() {
         runTest {
-            coEvery { repo.save(any()) } returns  dogBreedId5
+            coEvery { repo.save(any()) } returns dogBreedId5
             coEvery { repo.findAll() } returns breedsListWithIds1And2.asFlow()
             coEvery { apiClient.getImage(match { it.isNotEmpty() }) } returns dogBreedId5.image
 
-            var imageByBreed: ByteArray? = mockService.getImageByBreed("dummyBreed")
+            val imageByBreed: ByteArray? = mockService.getImageByBreed("dummyBreed")
 
             assertEquals(imageByBreed, dogBreedId5.image)
             coVerify(exactly = 1) { repo.save(any()) }
@@ -188,3 +197,6 @@ class DogBreedServiceTest {
 
 
 }
+
+
+

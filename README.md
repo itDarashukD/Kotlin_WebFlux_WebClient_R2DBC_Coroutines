@@ -1,4 +1,13 @@
-# Getting Started
+# !!! You have to start app with "dev profile" !!!
+
+
+
+
+
+
+
+
+
 
 This a template service for Kotlin for Backend Developers mentoring program.
 

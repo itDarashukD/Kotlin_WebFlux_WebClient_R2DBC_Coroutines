@@ -5,10 +5,10 @@ import org.springframework.data.relational.core.mapping.Table
 
 @Table
 data class DogBreed(
-    var id: Long? = null,
-    var breed: String = "",
-    var subBreed: String = "",
-    var image: ByteArray? = null
+    val id: Long? = null,
+    val breed: String = "",
+    val subBreed: String = "",
+    val image: ByteArray? = null
 )
 
 

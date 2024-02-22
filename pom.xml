@@ -26,39 +26,23 @@
   </properties>
 
   <dependencies>
-<!--    <dependency>-->
-<!--      <groupId>org.springframework.boot</groupId>-->
-<!--      <artifactId>spring-boot-starter-data-jpa</artifactId>-->
-<!--    </dependency>-->
-    <!--    <dependency>-->
-    <!--      <groupId>org.springframework.boot</groupId>-->
-    <!--      <artifactId>spring-boot-starter-web</artifactId>-->
-    <!--    </dependency>-->
+
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-cache</artifactId>
     </dependency>
+
     <dependency>
       <groupId>com.github.ben-manes.caffeine</groupId>
       <artifactId>caffeine</artifactId>
     </dependency>
-    <!-- Database -->
-    <!--    <dependency>-->
-    <!--      <groupId>com.h2database</groupId>-->
-    <!--      <artifactId>h2</artifactId>-->
-    <!--      <scope>runtime</scope>-->
-    <!--    </dependency>-->
-
-
-
-    <!-- Swagger -->
-    <dependency>
-      <groupId>org.springdoc</groupId>
-      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-      <version>${swagger-webmvc.version}</version>
-    </dependency>
 
     <!-- R2DBC -->
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-r2dbc</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>io.r2dbc</groupId>
@@ -78,34 +62,23 @@
       <version>${swagger-webflux.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+      <version>${swagger-webmvc.version}</version>
+    </dependency>
+
     <!-- Monitoring -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
+
     <dependency>
       <groupId>io.micrometer</groupId>
       <artifactId>micrometer-registry-prometheus</artifactId>
       <scope>runtime</scope>
     </dependency>
-
-    <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.hibernate.validator</groupId>
-      <artifactId>hibernate-validator</artifactId>
-      <!--            <version>&lt;!&ndash; Specify the version you want to use &ndash;&gt;</version>-->
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-
 
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
@@ -119,15 +92,6 @@
       <version>1.7.3</version>
     </dependency>
 
-    <!--    <dependency>-->
-<!--      <groupId>org.springframework.data</groupId>-->
-<!--      <artifactId>spring-data-r2dbc</artifactId>-->
-<!--    </dependency>-->
-
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-data-r2dbc</artifactId>
-    </dependency>
 
     <dependency>
       <groupId>org.jetbrains.kotlinx</groupId>
@@ -145,13 +109,19 @@
       <version>${kotlin.version}</version>
     </dependency>
 
-<!--    test-->
+    <!--    test-->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.jetbrains.kotlinx</groupId>
       <artifactId>kotlinx-coroutines-test</artifactId>
       <version>1.6.4</version>
       <type>pom</type>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -163,7 +133,7 @@
 
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>kotlin-test</artifactId>
+      <artifactId>kotlin-test-junit</artifactId>
       <version>RELEASE</version>
       <scope>test</scope>
     </dependency>

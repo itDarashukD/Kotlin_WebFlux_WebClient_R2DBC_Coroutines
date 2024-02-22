@@ -5,15 +5,22 @@ import com.epam.mentoring.kotlin.repository.DogBreedRepository
 import com.epam.mentoring.kotlin.rest.DogBreedApiClient
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.toList
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
+
+
 
 @Service
 open class DogBreedService(
     @Autowired private val dogBreedRepository: DogBreedRepository,
     val dogBreedApiClient: DogBreedApiClient,
 ) {
+
+    companion object {
+        private val log = LoggerFactory.getLogger(DogBreedService::class.java)
+    }
 
 
     @Cacheable("breeds")
@@ -54,7 +61,7 @@ open class DogBreedService(
     }
 
     open suspend fun getImageByBreed(breed: String): ByteArray? {
-        var image: ByteArray? = dogBreedApiClient.getImage(breed)
+        val image: ByteArray? = dogBreedApiClient.getImage(breed)
         val dogBreed = DogBreed(image = image)
 
         if (isAlreadyInDb(dogBreed)) {
@@ -65,15 +72,15 @@ open class DogBreedService(
     }
 
     private suspend fun getBreeds(): List<DogBreed> {
-        var allBreeds: List<DogBreed> = dogBreedRepository.findAll().toList()
+        val allBreeds: List<DogBreed> = dogBreedRepository.findAll().toList()
         if (allBreeds.isEmpty()) {
-            throw IllegalStateException("All Breads list is empty")
+            log.warn("AllBreads list is empty")
         }
         return allBreeds
     }
 
     private suspend fun isAlreadyInDb(dogBreed: DogBreed): Boolean {
-        var allBreeds: List<DogBreed> = getBreeds()
+        val allBreeds: List<DogBreed> = getBreeds()
 
         return allBreeds.filter { it.image.contentEquals(dogBreed.image) }.isNotEmpty()
     }

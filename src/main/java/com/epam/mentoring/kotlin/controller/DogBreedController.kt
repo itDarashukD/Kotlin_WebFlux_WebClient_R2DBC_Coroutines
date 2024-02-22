@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
+
+
 @Tag(name = "Dog Breed APIs", description = "Breed APIs for demo purpose")
 @RestController
 @RequestMapping("v1/breeds")
@@ -34,7 +36,7 @@ class DogBreedController(private val dogBreedService: DogBreedService) {
 
     @GetMapping(path = ["/breedsWithoutSubBreeds"])
     suspend fun getAllBreedsWithoutSubBreeds(): List<DogBreedResponse> {
-        var allBreedsWithoutSubBreeds = dogBreedService.getAllBreedsWithoutSubBreeds()
+        val allBreedsWithoutSubBreeds = dogBreedService.getAllBreedsWithoutSubBreeds()
 
         return allBreedsWithoutSubBreeds
                                         .map { dogBreed -> this.mapToDogBreedResponse(dogBreed) }

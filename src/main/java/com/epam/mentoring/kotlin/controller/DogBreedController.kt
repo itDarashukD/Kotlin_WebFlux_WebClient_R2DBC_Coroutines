@@ -30,7 +30,7 @@ class DogBreedController(private val dogBreedService: DogBreedService) {
     }
 
     @GetMapping(path = ["/{breed}"])
-    suspend fun getAllSubBreedsByBreed(@PathVariable(value = "breed") breed: String): List<String> {
+    suspend fun getAllSubBreedsByBreed(@PathVariable(value = "breed") breed: String): Set<String> {
         return dogBreedService.getAllSubBreedsByBreed(breed)
     }
 

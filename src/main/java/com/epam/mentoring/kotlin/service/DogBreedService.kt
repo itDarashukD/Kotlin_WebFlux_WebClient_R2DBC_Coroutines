@@ -18,55 +18,39 @@ open class DogBreedService(
 
     @Cacheable("breeds")
     open suspend fun getAllBreeds(): List<DogBreed> {
-        var allBreeds: List<DogBreed> = dogBreedRepository.findAll().toList()
-
-        println("11111111111111 $allBreeds")
-
-        if (allBreeds.isNotEmpty()) {
-            return allBreeds
-        }
-        return emptyList()
+        return getBreeds()
     }
 
     open suspend fun getAllSubBreeds(): Set<String> {
-        var allBreeds: List<DogBreed> = dogBreedRepository.findAll().toList()
+        var allBreeds: List<DogBreed> = getBreeds()
 
-        val collect = allBreeds.map { dogBreed -> dogBreed.subBreed }.toSet()
-        println("11111111111111 $collect")
-
-        if (collect.isNotEmpty()) {
-            return collect
-        }
-        return emptySet()
+        return allBreeds.map { dogBreed -> dogBreed.subBreed }
+                        .filter { it.isNotEmpty() }
+                        .toSet()
     }
 
     open suspend fun getAllBreedsWithoutSubBreeds(): List<DogBreed> {
-        var allBreeds: List<DogBreed> = dogBreedRepository.findAll().toList()
+        var allBreeds: List<DogBreed> = getBreeds()
 
-        val collect = allBreeds
+        return allBreeds
             .filter { it.subBreed.isBlank() }
             .toList()
-        println("11111111111111 $collect")
-
-        if (collect.isNotEmpty()) {
-            return collect
-        }
-        return emptyList()
     }
 
-    open suspend fun getAllSubBreedsByBreed(breed: String): List<String> {
-        var allBreeds: List<DogBreed> = dogBreedRepository.findAll().toList()
+    open suspend fun getAllSubBreedsByBreed(breed: String): Set<String> {
+        var allBreeds: List<DogBreed> = getBreeds()
 
-        val collect = allBreeds.filter { it.breed == breed }
-                                        .map { it.subBreed }
-                                        .toList()
+        return allBreeds.filter { it.breed == breed }
+                        .map { it.subBreed }
+                        .toSet()
+    }
 
-        println("11111111111111 $collect")
-        if (collect.isNotEmpty()) {
-            return collect
-        }
-        return emptyList()
+    open suspend fun saveAll(breeds: Map<String, List<String>>){
+        val dogBreeds: List<DogBreed> = breeds.entries
+                                                    .map(this::toDogBreed)
+                                                    .toList()
 
+        dogBreedRepository.saveAll(dogBreeds).collect();
     }
 
     open suspend fun getImageByBreed(breed: String): ByteArray? {
@@ -80,30 +64,26 @@ open class DogBreedService(
         }
     }
 
-    private suspend fun isAlreadyInDb(dogBreed: DogBreed): Boolean {
+    private suspend fun getBreeds(): List<DogBreed> {
         var allBreeds: List<DogBreed> = dogBreedRepository.findAll().toList()
-
-        var filter: List<DogBreed> = allBreeds.filter { it.image.contentEquals(dogBreed.image) }
-        if (filter.isNotEmpty()) {
-            return true
+        if (allBreeds.isEmpty()) {
+            throw IllegalStateException("All Breads list is empty")
         }
-        return false
+        return allBreeds
     }
 
-    open suspend fun saveAll(breeds: Map<String, List<String>>): Unit {
-        val dogBreeds: List<DogBreed> = breeds.entries
-            .map(this::toDogBreed)          //map to objects DogBreed
-            .toList()
+    private suspend fun isAlreadyInDb(dogBreed: DogBreed): Boolean {
+        var allBreeds: List<DogBreed> = getBreeds()
 
-        dogBreedRepository.saveAll(dogBreeds).collect();
-
+        return allBreeds.filter { it.image.contentEquals(dogBreed.image) }.isNotEmpty()
     }
 
     private fun toDogBreed(entry: Map.Entry<String, List<String>>): DogBreed {
         val value: List<String> = entry.value
         val subBreeds: String = value.joinToString(",")
 
-        val dogBreed: DogBreed = DogBreed(null, entry.key, subBreeds, null)
-        return dogBreed;
+        return DogBreed(null, entry.key, subBreeds, null)
     }
+
+
 }

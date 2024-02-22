@@ -145,6 +145,26 @@
       <version>${kotlin.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.jetbrains.kotlinx</groupId>
+      <artifactId>kotlinx-coroutines-test</artifactId>
+      <version>1.6.4</version>
+      <type>pom</type>
+    </dependency>
+
+    <dependency>
+      <groupId>io.mockk</groupId>
+      <artifactId>mockk-jvm</artifactId>
+      <version>1.13.9</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-test</artifactId>
+      <version>RELEASE</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>

@@ -40,7 +40,6 @@ class DogBreedApiClient(webClientBuilder: WebClient.Builder) {
             .uri("/api/breed/$breed/images")
             .retrieve()
             .awaitBody<ImageUrlResponse>()
-//            .block()
 
         if (response == null) {
             throw Exception()
@@ -50,7 +49,6 @@ class DogBreedApiClient(webClientBuilder: WebClient.Builder) {
 
 
     private suspend fun downloadImage(imagesUrls: List<String>?): ByteArray? {
-
         var url: String? = imagesUrls
                                     ?.filter { it.isNotBlank() }
                                     ?.first()

@@ -1,0 +1,36 @@
+server:
+  port: 8081
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  cache:
+    caffeine:
+      spec: expireAfterAccess=600s
+    cache-names: breeds
+  sql:
+    init:
+      mode: always
+
+  r2dbc:
+    url: r2dbc:h2:file:///./src/test/resources/db/~;MODE=PostgreSQL
+
+
+management:
+  endpoint:
+    prometheus:
+      enabled: true
+    metrics:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: [ "prometheus", "metrics"]
+
+
+#logging:
+#   level:
+#     org:
+#       springframework : debug
